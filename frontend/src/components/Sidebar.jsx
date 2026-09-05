@@ -13,18 +13,13 @@ import {
   HelpCircle,
   MessageSquareQuote,
   ShieldCheck,
-  Smartphone,
-  Sparkles,
-  Radio,
-  ChevronRight
+  Radio
 } from 'lucide-react';
 
 export const Sidebar = () => {
   const { 
     activeTab, 
     setActiveTab, 
-    isSimulatorOpen, 
-    setIsSimulatorOpen, 
     contactInquiriesList,
     partnersList 
   } = useApp();
@@ -38,20 +33,19 @@ export const Sidebar = () => {
     { id: 'content', label: 'Content & Episodes', icon: <Film className="w-5 h-5" />, group: 'OTT STUDIO' },
     { id: 'partners', label: 'Content Partners', icon: <Building2 className="w-5 h-5" />, badge: pendingPayouts ? `${pendingPayouts} due` : undefined, badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30', group: 'OTT STUDIO' },
     
-    // { id: 'plans', label: 'Subscription Plans', icon: <CreditCard className="w-5 h-5" />, group: 'MONETIZATION' },
-    // { id: 'subscribers', label: 'Subscribed Users', icon: <Receipt className="w-5 h-5" />, group: 'MONETIZATION' },
+    { id: 'plans', label: 'Subscription Plans', icon: <CreditCard className="w-5 h-5" />, group: 'MONETIZATION' },
+    { id: 'subscribers', label: 'Subscribed Users', icon: <Receipt className="w-5 h-5" />, group: 'MONETIZATION' },
     { id: 'users', label: 'User Management', icon: <Users className="w-5 h-5" />, group: 'COMMUNITY' },
     { id: 'notifications', label: 'Push Notifications', icon: <BellRing className="w-5 h-5" />, group: 'COMMUNITY' },
     
-    // { id: 'legal', label: 'Legal Pages CMS', icon: <FileText className="w-5 h-5" />, group: 'SUPPORT & CMS' },
-    // { id: 'faqs', label: 'FAQ Manager', icon: <HelpCircle className="w-5 h-5" />, group: 'SUPPORT & CMS' },
-    // { id: 'contact', label: 'Contact Us & Tickets', icon: <MessageSquareQuote className="w-5 h-5" />, badge: pendingTickets ? `${pendingTickets} open` : undefined, badgeColor: 'bg-rose-500/20 text-rose-300 border-rose-500/30', group: 'SUPPORT & CMS' },
-    // { id: 'settings', label: 'Admin & Roles RBAC', icon: <ShieldCheck className="w-5 h-5" />, group: 'SYSTEM' },
+    { id: 'legal', label: 'Legal Pages CMS', icon: <FileText className="w-5 h-5" />, group: 'SUPPORT & CMS' },
+    { id: 'faqs', label: 'FAQ Manager', icon: <HelpCircle className="w-5 h-5" />, group: 'SUPPORT & CMS' },
+    { id: 'contact', label: 'Contact Us & Tickets', icon: <MessageSquareQuote className="w-5 h-5" />, badge: pendingTickets ? `${pendingTickets} open` : undefined, badgeColor: 'bg-rose-500/20 text-rose-300 border-rose-500/30', group: 'SUPPORT & CMS' },
+    { id: 'settings', label: 'Admin & Roles RBAC', icon: <ShieldCheck className="w-5 h-5" />, group: 'SYSTEM' },
   ];
 
   // Group items by category
-  // const groups = ['OVERVIEW', 'OTT STUDIO', 'MONETIZATION', 'COMMUNITY', 'SUPPORT & CMS', 'SYSTEM'];
-  const groups = ['OVERVIEW', 'OTT STUDIO', 'COMMUNITY'];
+  const groups = ['OVERVIEW', 'OTT STUDIO', 'MONETIZATION', 'COMMUNITY', 'SUPPORT & CMS', 'SYSTEM'];
 
   return (
     <aside className="w-72 bg-[#0C1018] border-r border-[#1E2638] flex flex-col h-screen select-none shrink-0 z-20">
