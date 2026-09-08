@@ -42,6 +42,7 @@ export const Sidebar = () => {
     { id: 'faqs', label: 'FAQ Manager', icon: <HelpCircle className="w-5 h-5" />, group: 'SUPPORT & CMS' },
     { id: 'contact', label: 'Contact Us & Tickets', icon: <MessageSquareQuote className="w-5 h-5" />, badge: pendingTickets ? `${pendingTickets} open` : undefined, badgeColor: 'bg-rose-500/20 text-rose-300 border-rose-500/30', group: 'SUPPORT & CMS' },
     { id: 'settings', label: 'Admin & Roles RBAC', icon: <ShieldCheck className="w-5 h-5" />, group: 'SYSTEM' },
+    { id: 'loginpage', label: 'Login Page', icon: <ShieldCheck className="w-5 h-5" />, group: 'SYSTEM' },
   ];
 
   // Group items by category

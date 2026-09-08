@@ -17,6 +17,7 @@ import { LegalCMS } from './pages/LegalCMS';
 import { FAQManager } from './pages/FAQManager';
 import { ContactUsInbox } from './pages/ContactUsInbox';
 import { AdminSettings } from './pages/AdminSettings';
+import LoginPage  from './pages/Loginpage';
 
 const MainLayout = () => {
   const { activeTab } = useApp();
@@ -35,6 +36,8 @@ const MainLayout = () => {
         );
       case 'partners':
         return <ContentPartners />;
+      case 'loginpage':
+        return <LoginPage />;
       case 'plans':
         return <SubscriptionPlans />;
       case 'subscribers':
