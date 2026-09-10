@@ -67,7 +67,7 @@ export const ContentPartners = () => {
       </div>
 
       {/* Summary KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <div className="p-5 rounded-2xl bg-[#0D111A] border border-amber-500/30 shadow-xl">
           <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Partner Royalties</span>
           <div className="text-2xl font-black font-display text-amber-400 mt-1 font-mono">
@@ -91,7 +91,7 @@ export const ContentPartners = () => {
           </div>
           <p className="text-[11px] text-slate-400 mt-1">Producing 9:16 vertical series</p>
         </div>
-      </div>
+      </div> */}
 
       {/* Partners List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

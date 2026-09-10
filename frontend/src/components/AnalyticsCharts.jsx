@@ -173,7 +173,7 @@ export const AnalyticsCharts = () => {
         </div>
 
         {/* Geographic Distribution */}
-        <div className="p-6 rounded-2xl bg-[#0D111A] border border-[#1E2638] shadow-xl">
+        {/* <div className="p-6 rounded-2xl bg-[#0D111A] border border-[#1E2638] shadow-xl">
           <div className="flex items-center justify-between pb-3 border-b border-slate-800">
             <h4 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
               <Smartphone className="w-4 h-4 text-rose-400" />
@@ -195,7 +195,7 @@ export const AnalyticsCharts = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
