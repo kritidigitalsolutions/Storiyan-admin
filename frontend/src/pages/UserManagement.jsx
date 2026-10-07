@@ -144,7 +144,7 @@ export const UserManagement = () => {
                       Profile
                     </button>
                     <button
-                      onClick={() => toggleUserStatus(user.id)}
+                      onClick={() => toggleUserStatus(user.id || user._id)}
                       className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold border ${
                         user.status === 'banned'
                           ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
@@ -221,8 +221,9 @@ export const UserManagement = () => {
               <div className="flex items-center gap-3 text-xs">
                 <button
                   onClick={() => {
-                    adjustUserCoins(selectedUser.id, 50);
-                    setSelectedUser({ ...selectedUser, walletCoins: selectedUser.walletCoins + 50 });
+                    const uid = selectedUser.id || selectedUser._id;
+                    adjustUserCoins(uid, 50);
+                    setSelectedUser({ ...selectedUser, walletCoins: (selectedUser.walletCoins || 0) + 50 });
                   }}
                   className="flex-1 py-2 rounded-xl bg-amber-500 text-black font-bold flex items-center justify-center gap-1 shadow-glow-gold"
                 >
@@ -230,8 +231,9 @@ export const UserManagement = () => {
                 </button>
                 <button
                   onClick={() => {
-                    adjustUserCoins(selectedUser.id, -20);
-                    setSelectedUser({ ...selectedUser, walletCoins: Math.max(0, selectedUser.walletCoins - 20) });
+                    const uid = selectedUser.id || selectedUser._id;
+                    adjustUserCoins(uid, -20);
+                    setSelectedUser({ ...selectedUser, walletCoins: Math.max(0, (selectedUser.walletCoins || 0) - 20) });
                   }}
                   className="flex-1 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white font-semibold flex items-center justify-center gap-1"
                 >

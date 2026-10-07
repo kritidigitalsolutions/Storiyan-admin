@@ -114,7 +114,7 @@ export const SubscribedUsers = () => {
               </thead>
               <tbody className="divide-y divide-slate-800">
                 {filteredSubscribers.map(sub => (
-                  <tr key={sub.id} className="hover:bg-slate-900/50 transition-colors">
+                  <tr key={sub.id || sub._id} className="hover:bg-slate-900/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <img src={sub.userAvatar} alt={sub.userName} className="w-9 h-9 rounded-xl object-cover ring-1 ring-amber-400/40" />
@@ -196,7 +196,7 @@ export const SubscribedUsers = () => {
                 </thead>
                 <tbody className="divide-y divide-slate-800">
                   {filteredTransactions.map(txn => (
-                    <tr key={txn.id} className="hover:bg-slate-900/50 transition-colors">
+                    <tr key={txn.id || txn._id} className="hover:bg-slate-900/50 transition-colors">
                       <td className="px-6 py-4 font-mono font-bold text-amber-400">{txn.orderId}</td>
                       <td className="px-6 py-4">
                         <div className="font-semibold text-white">{txn.userName}</div>
@@ -224,7 +224,7 @@ export const SubscribedUsers = () => {
                       <td className="px-6 py-4 text-right">
                         {txn.paymentStatus === 'SUCCESS' && (
                           <button
-                            onClick={() => setRefundModalTxn(txn.id)}
+                            onClick={() => setRefundModalTxn(txn.id || txn._id)}
                             className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-rose-400 hover:text-rose-300 text-xs font-semibold transition-colors"
                           >
                             Refund

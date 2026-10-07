@@ -13,7 +13,8 @@ import {
   HelpCircle,
   MessageSquareQuote,
   ShieldCheck,
-  Radio
+  Radio,
+  LogOut
 } from 'lucide-react';
 
 export const Sidebar = () => {
@@ -21,7 +22,8 @@ export const Sidebar = () => {
     activeTab, 
     setActiveTab, 
     contactInquiriesList,
-    partnersList 
+    partnersList,
+    logoutAdmin
   } = useApp();
 
   const pendingTickets = contactInquiriesList.filter(t => t.status === 'open').length;
@@ -42,7 +44,6 @@ export const Sidebar = () => {
     { id: 'faqs', label: 'FAQ Manager', icon: <HelpCircle className="w-5 h-5" />, group: 'SUPPORT & CMS' },
     { id: 'contact', label: 'Contact Us & Tickets', icon: <MessageSquareQuote className="w-5 h-5" />, badge: pendingTickets ? `${pendingTickets} open` : undefined, badgeColor: 'bg-rose-500/20 text-rose-300 border-rose-500/30', group: 'SUPPORT & CMS' },
     { id: 'settings', label: 'Admin & Roles RBAC', icon: <ShieldCheck className="w-5 h-5" />, group: 'SYSTEM' },
-    { id: 'loginpage', label: 'Login Page', icon: <ShieldCheck className="w-5 h-5" />, group: 'SYSTEM' },
   ];
 
   // Group items by category
@@ -119,7 +120,7 @@ export const Sidebar = () => {
         })}
       </div>
 
-      {/* Live Streaming Health Indicator */}
+      {/* Live Streaming Health Indicator & Sign Out */}
       <div className="p-3 border-t border-[#1E2638] space-y-2 bg-[#090C14]">
         <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
           <div className="flex items-center gap-2">
@@ -128,6 +129,14 @@ export const Sidebar = () => {
           </div>
           <span className="text-emerald-400 font-semibold font-mono">99.98%</span>
         </div>
+
+        <button
+          onClick={logoutAdmin}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 border border-rose-500/20 transition-all"
+        >
+          <LogOut className="w-3.5 h-3.5" />
+          <span>Sign Out</span>
+        </button>
       </div>
     </aside>
   );

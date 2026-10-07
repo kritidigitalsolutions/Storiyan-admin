@@ -30,8 +30,8 @@ export const VideoPlayerModal = () => {
         <div className="md:w-1/2 bg-black relative flex items-center justify-center p-4 min-h-[420px]">
           <div className="relative w-[270px] h-[480px] rounded-2xl overflow-hidden border border-slate-800 shadow-2xl bg-black">
             <video
-              src={episode.videoUrl}
-              poster={episode.thumbnail || series.coverVertical}
+              src={episode?.videoUrl}
+              poster={episode?.thumbnail || series?.coverVertical}
               autoPlay
               loop
               muted={isMuted}
@@ -111,7 +111,7 @@ export const VideoPlayerModal = () => {
             <div className="mt-4 space-y-1">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Episode Synopsis</span>
               <p className="text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-3 rounded-xl border border-slate-800">
-                {episode.synopsis || series.description}
+                {episode?.synopsis || series?.description || 'Vertical drama streaming.'}
               </p>
             </div>
 
@@ -125,7 +125,7 @@ export const VideoPlayerModal = () => {
                 </div>
                 <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
                   <div className="text-[10px] text-slate-400">Duration</div>
-                  <div className="font-bold text-slate-200 mt-0.5">{episode.durationFormatted} ({episode.durationSeconds || 180}s)</div>
+                  <div className="font-bold text-slate-200 mt-0.5">{episode?.durationFormatted || '02:30'} ({episode?.durationSeconds || 150}s)</div>
                 </div>
                 <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
                   <div className="text-[10px] text-slate-400">Audio Codec</div>
@@ -133,7 +133,7 @@ export const VideoPlayerModal = () => {
                 </div>
                 <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
                   <div className="text-[10px] text-slate-400">Partner Studio</div>
-                  <div className="font-bold text-slate-200 mt-0.5">{series.partnerName}</div>
+                  <div className="font-bold text-slate-200 mt-0.5">{series?.partnerName || 'Storiyan Studio'}</div>
                 </div>
               </div>
             </div>

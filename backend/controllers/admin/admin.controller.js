@@ -493,6 +493,30 @@ exports.processRefund = async (req, res) => {
   }
 };
 
+exports.getAllTransactions = async (req, res) => {
+  try {
+    const transactions = await Transaction.find().sort({ createdAt: -1 });
+    const mapped = transactions.map((t) => {
+      const obj = t.toObject();
+      return {
+        ...obj,
+        id: t._id,
+        orderId: t.referenceNo || `ORD-${t._id}`,
+        userName: t.userName || "Storiyan Viewer",
+        userPhone: t.userPhone || "+91 98765 00000",
+        planOrItem: t.description || t.type || "Subscription Pass",
+        amount: t.amount || 0,
+        gateway: t.paymentMethod || "UPI",
+        paymentStatus: t.status || "SUCCESS",
+        timestamp: t.createdAt ? t.createdAt.toISOString().replace("T", " ").substring(0, 19) : "2025-01-01 00:00:00",
+      };
+    });
+    res.status(200).json({ success: true, count: mapped.length, data: mapped });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // ==================== USER MANAGEMENT ====================
 exports.getAllUsers = async (req, res) => {
   try {

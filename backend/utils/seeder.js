@@ -15,9 +15,9 @@ const bcrypt = require("bcrypt");
 const seedDatabase = async () => {
   try {
     // 1. Check or Seed Admin
-    const adminCount = await Admin.countDocuments();
-    if (adminCount === 0) {
-      const hashedPassword = await bcrypt.hash("admin123", 10);
+    const hashedPassword = await bcrypt.hash("admin123", 10);
+    const existingAdmin = await Admin.findOne({ email: "admin@storiyan.tv" });
+    if (!existingAdmin) {
       await Admin.create([
         {
           name: "Vikram Sharma (Super Admin)",

@@ -68,14 +68,14 @@ export const AdminSettings = () => {
 
           <div className="divide-y divide-slate-800">
             {adminRolesList.map(admin => (
-              <div key={admin.id} className="py-3.5 flex items-center justify-between gap-4">
+              <div key={admin.id || admin._id} className="py-3.5 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                  <img src={admin.avatar} alt={admin.name} className="w-10 h-10 rounded-xl object-cover ring-1 ring-amber-400/40" />
+                  <img src={admin.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80"} alt={admin.name || 'Admin'} className="w-10 h-10 rounded-xl object-cover ring-1 ring-amber-400/40" />
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-white text-sm">{admin.name}</span>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                        {admin.role}
+                      <span className="font-bold text-white text-sm">{admin.name || 'Admin User'}</span>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 capitalize">
+                        {admin.role || 'Staff'}
                       </span>
                     </div>
                     <div className="text-slate-400 text-xs mt-0.5">{admin.email}</div>
@@ -84,9 +84,9 @@ export const AdminSettings = () => {
 
                 <div className="text-right">
                   <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full">
-                    {admin.status.toUpperCase()}
+                    {(admin.status || 'active').toUpperCase()}
                   </span>
-                  <div className="text-[10px] text-slate-500 mt-1 font-mono">{admin.lastLogin}</div>
+                  <div className="text-[10px] text-slate-500 mt-1 font-mono">{admin.lastLogin || 'Active Today'}</div>
                 </div>
               </div>
             ))}

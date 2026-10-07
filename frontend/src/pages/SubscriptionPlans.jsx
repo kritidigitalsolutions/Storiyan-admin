@@ -66,7 +66,7 @@ export const SubscriptionPlans = () => {
     const features = featuresText.split('\n').map(f => f.trim()).filter(Boolean);
 
     if (editingPlan) {
-      updatePlan(editingPlan.id, {
+      updatePlan(editingPlan.id || editingPlan._id, {
         name,
         badge,
         price: Number(price),
@@ -141,7 +141,7 @@ export const SubscriptionPlans = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {plansList.map((plan) => (
           <div
-            key={plan.id}
+            key={plan.id || plan._id}
             className={`p-6 rounded-3xl border flex flex-col justify-between transition-all duration-300 relative group overflow-hidden ${
               plan.isMostPopular
                 ? 'border-amber-400/80 bg-gradient-to-b from-[#1E1710] to-[#0D111A] shadow-glow-gold'
@@ -199,7 +199,7 @@ export const SubscriptionPlans = () => {
 
               {/* Features List */}
               <div className="mt-5 space-y-2 border-t border-slate-800/80 pt-4">
-                {plan.features.map((feature, i) => (
+                {(plan.features || []).map((feature, i) => (
                   <div key={i} className="flex items-start gap-2 text-xs text-slate-300">
                     <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
                     <span>{feature}</span>
@@ -212,7 +212,7 @@ export const SubscriptionPlans = () => {
             <div className="mt-6 pt-4 border-t border-slate-800/80 space-y-2">
               <div className="flex items-center justify-between text-xs text-slate-400 pb-1">
                 <span>Active Subscribers</span>
-                <span className="font-bold text-white font-mono">{plan.subscribersCount.toLocaleString()}</span>
+                <span className="font-bold text-white font-mono">{(plan.subscribersCount || 0).toLocaleString()}</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -224,7 +224,7 @@ export const SubscriptionPlans = () => {
                   <span>Edit Plan</span>
                 </button>
                 <button
-                  onClick={() => togglePlanStatus(plan.id)}
+                  onClick={() => togglePlanStatus(plan.id || plan._id)}
                   className={`px-3 py-2 rounded-xl text-xs font-bold border transition-all ${
                     plan.isActive
                       ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'

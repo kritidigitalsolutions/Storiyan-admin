@@ -12,6 +12,36 @@ export const AppProvider = ({ children }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [globalSearch, setGlobalSearch] = useState('');
   const [isLoadingFromBackend, setIsLoadingFromBackend] = useState(true);
+  const [isBackendConnected, setIsBackendConnected] = useState(false);
+  const [dashboardStats, setDashboardStats] = useState(null);
+  const [authToken, setAuthToken] = useState(() => localStorage.getItem('storiyan_admin_token') || null);
+  const [currentAdminUser, setCurrentAdminUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('storiyan_admin_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const isAuthenticated = Boolean(authToken && currentAdminUser);
+
+  const loginAdmin = (adminUser, token) => {
+    localStorage.setItem('storiyan_admin_token', token);
+    localStorage.setItem('storiyan_admin_user', JSON.stringify(adminUser));
+    setAuthToken(token);
+    setCurrentAdminUser(adminUser);
+    setActiveTab('dashboard');
+  };
+
+  const logoutAdmin = () => {
+    localStorage.removeItem('storiyan_admin_token');
+    localStorage.removeItem('storiyan_admin_user');
+    setAuthToken(null);
+    setCurrentAdminUser(null);
+    setActiveTab('dashboard');
+    addToast({ title: 'Logged Out', message: 'You have been safely signed out.', type: 'warning' });
+  };
 
   // Collections
   const [seriesList, setSeriesList] = useState(INITIAL_SERIES);
@@ -60,72 +90,109 @@ export const AppProvider = ({ children }) => {
         partnersRes,
         plansRes,
         subscribersRes,
+        transactionsRes,
         usersRes,
         notificationsRes,
         legalRes,
         faqsRes,
         inquiriesRes,
+        rolesRes,
+        statsRes,
       ] = await Promise.allSettled([
         adminApi.getAllSeries(),
         adminApi.getAllPartners(),
         adminApi.getAllPlans(),
         adminApi.getAllSubscribers(),
+        adminApi.getAllTransactions(),
         adminApi.getAllUsers(),
         adminApi.getAllNotifications(),
         adminApi.getAllLegalDocs(),
         adminApi.getAllFAQs(),
         adminApi.getAllInquiries(),
+        adminApi.getAdminRoles(),
+        adminApi.getDashboardStats(),
       ]);
 
-      if (seriesRes.status === 'fulfilled' && seriesRes.value.data?.length > 0) {
+      let backendHits = 0;
+
+      if (seriesRes.status === 'fulfilled' && seriesRes.value?.data?.length > 0) {
         setSeriesList(seriesRes.value.data);
         setActiveSimulatorSeries(seriesRes.value.data[0]);
         if (seriesRes.value.data[0]?.episodes?.length > 0) {
           setActiveSimulatorEpisode(seriesRes.value.data[0].episodes[0]);
         }
+        backendHits++;
       }
 
-      if (partnersRes.status === 'fulfilled' && partnersRes.value.data?.length > 0) {
+      if (partnersRes.status === 'fulfilled' && partnersRes.value?.data?.length > 0) {
         setPartnersList(partnersRes.value.data);
+        backendHits++;
       }
 
-      if (plansRes.status === 'fulfilled' && plansRes.value.data?.length > 0) {
+      if (plansRes.status === 'fulfilled' && plansRes.value?.data?.length > 0) {
         setPlansList(plansRes.value.data);
+        backendHits++;
       }
 
-      if (subscribersRes.status === 'fulfilled' && subscribersRes.value.data?.length > 0) {
+      if (subscribersRes.status === 'fulfilled' && subscribersRes.value?.data?.length > 0) {
         setSubscribedUsersList(subscribersRes.value.data);
+        backendHits++;
       }
 
-      if (usersRes.status === 'fulfilled' && usersRes.value.data?.length > 0) {
+      if (transactionsRes.status === 'fulfilled' && transactionsRes.value?.data?.length > 0) {
+        setTransactionsList(transactionsRes.value.data);
+        backendHits++;
+      }
+
+      if (usersRes.status === 'fulfilled' && usersRes.value?.data?.length > 0) {
         setUsersList(usersRes.value.data);
+        backendHits++;
       }
 
-      if (notificationsRes.status === 'fulfilled' && notificationsRes.value.data?.length > 0) {
+      if (notificationsRes.status === 'fulfilled' && notificationsRes.value?.data?.length > 0) {
         setNotificationsList(notificationsRes.value.data);
+        backendHits++;
       }
 
-      if (legalRes.status === 'fulfilled' && legalRes.value.data?.length > 0) {
+      if (legalRes.status === 'fulfilled' && legalRes.value?.data?.length > 0) {
         setLegalDocsList(legalRes.value.data);
+        backendHits++;
       }
 
-      if (faqsRes.status === 'fulfilled' && faqsRes.value.data?.length > 0) {
+      if (faqsRes.status === 'fulfilled' && faqsRes.value?.data?.length > 0) {
         setFaqsList(faqsRes.value.data);
+        backendHits++;
       }
 
-      if (inquiriesRes.status === 'fulfilled' && inquiriesRes.value.data?.length > 0) {
+      if (inquiriesRes.status === 'fulfilled' && inquiriesRes.value?.data?.length > 0) {
         setContactInquiriesList(inquiriesRes.value.data);
+        backendHits++;
       }
+
+      if (rolesRes.status === 'fulfilled' && rolesRes.value?.data?.length > 0) {
+        setAdminRolesList(rolesRes.value.data);
+        backendHits++;
+      }
+
+      if (statsRes.status === 'fulfilled' && statsRes.value?.data) {
+        setDashboardStats(statsRes.value.data);
+        backendHits++;
+      }
+
+      setIsBackendConnected(backendHits > 0);
     } catch (error) {
       console.warn('Backend connection note:', error.message);
+      setIsBackendConnected(false);
     } finally {
       setIsLoadingFromBackend(false);
     }
   };
 
   useEffect(() => {
-    fetchAllData();
-  }, []);
+    if (isAuthenticated) {
+      fetchAllData();
+    }
+  }, [isAuthenticated]);
 
   // Series actions
   const addSeries = async (newS) => {
@@ -587,6 +654,26 @@ export const AppProvider = ({ children }) => {
     addToast({ title: 'Ticket Updated', message: `Status marked as ${status.toUpperCase()}.`, type: 'info' });
   };
 
+  const addAdminRole = async (roleData) => {
+    try {
+      const res = await adminApi.createAdminRole(roleData);
+      if (res.success && res.data) {
+        setAdminRolesList(prev => [res.data, ...prev]);
+        addToast({ title: 'Role Created', message: `${res.data.name} added.`, type: 'success' });
+        return;
+      }
+    } catch (err) {
+      console.warn('API error, using local fallback:', err.message);
+    }
+    const fallback = {
+      id: `admin-${Date.now()}`,
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
+      ...roleData,
+    };
+    setAdminRolesList(prev => [fallback, ...prev]);
+    addToast({ title: 'Staff Added', message: `${fallback.name} added to staff.`, type: 'success' });
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -603,7 +690,17 @@ export const AppProvider = ({ children }) => {
         faqsList,
         contactInquiriesList,
         adminRolesList,
+        addAdminRole,
         isLoadingFromBackend,
+        isBackendConnected,
+        dashboardStats,
+        currentAdminUser,
+        setCurrentAdminUser,
+        authToken,
+        setAuthToken,
+        isAuthenticated,
+        loginAdmin,
+        logoutAdmin,
         fetchAllData,
         addSeries,
         updateSeries,

@@ -88,15 +88,15 @@ export const ContentManagement = ({
     const castArray = cast.split(',').map(c => c.trim()).filter(Boolean);
 
     if (editingSeries) {
-      updateSeries(editingSeries.id, {
+      updateSeries(editingSeries.id || editingSeries._id, {
         title,
         description,
         coverVertical,
         bannerHorizontal,
         genre: genres,
         totalEpisodes: Number(totalEpisodes),
-        partnerId: partner.id,
-        partnerName: partner.name,
+        partnerId: partner ? (partner.id || partner._id) : null,
+        partnerName: partner ? partner.name : 'Storiyan Originals',
         ageRating,
         isFeatured,
         director,
@@ -441,7 +441,7 @@ export const ContentManagement = ({
                         <Edit2 className="w-3.5 h-3.5" />
                       </button>
                       <button
-                        onClick={() => deleteSeries(series.id)}
+                        onClick={() => deleteSeries(series.id || series._id)}
                         className="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 transition-colors"
                         title="Delete Series"
                       >
@@ -577,7 +577,7 @@ export const ContentManagement = ({
                       <Edit2 className="w-3 h-3" /> Edit Info
                     </button>
                     <button
-                      onClick={() => deleteSeries(series.id)}
+                      onClick={() => deleteSeries(series.id || series._id)}
                       className="text-rose-400/80 hover:text-rose-300 flex items-center gap-1"
                     >
                       <Trash2 className="w-3 h-3" /> Remove

@@ -141,11 +141,11 @@ export const ContentPartners = () => {
                 </div>
                 <div>
                   <div className="text-[10px] text-slate-400">Total Royalties</div>
-                  <div className="font-bold text-emerald-400 mt-0.5 font-mono">₹{partner.totalEarnings.toLocaleString()}</div>
+                  <div className="font-bold text-emerald-400 mt-0.5 font-mono">₹{(partner.totalEarnings || 0).toLocaleString()}</div>
                 </div>
                 <div>
                   <div className="text-[10px] text-slate-400">Pending Due</div>
-                  <div className="font-bold text-rose-400 mt-0.5 font-mono">₹{partner.pendingPayout.toLocaleString()}</div>
+                  <div className="font-bold text-rose-400 mt-0.5 font-mono">₹{(partner.pendingPayout || 0).toLocaleString()}</div>
                 </div>
               </div>
 
@@ -163,14 +163,14 @@ export const ContentPartners = () => {
 
               {/* Payout Action */}
               <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
-                <span className="text-[11px] text-slate-500">Partner since {partner.joinedDate}</span>
-                {partner.pendingPayout > 0 ? (
+                <span className="text-[11px] text-slate-500">Partner since {partner.joinedDate || '2024'}</span>
+                {(partner.pendingPayout || 0) > 0 ? (
                   <button
-                    onClick={() => processPartnerPayout(partner.id)}
+                    onClick={() => processPartnerPayout(partner.id || partner._id)}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold transition-all shadow-md"
                   >
                     <Send className="w-3.5 h-3.5" />
-                    <span>Disburse ₹{partner.pendingPayout.toLocaleString()}</span>
+                    <span>Disburse ₹{(partner.pendingPayout || 0).toLocaleString()}</span>
                   </button>
                 ) : (
                   <span className="text-xs text-emerald-400 font-semibold flex items-center gap-1">

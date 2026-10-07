@@ -20,6 +20,8 @@ export const Dashboard = ({ onOpenNewSeriesModal }) => {
     seriesList,
     transactionsList,
     subscribedUsersList,
+    dashboardStats,
+    isBackendConnected,
     setActiveTab,
     setActiveSimulatorSeries,
     setSimulatorScreen,
@@ -27,9 +29,13 @@ export const Dashboard = ({ onOpenNewSeriesModal }) => {
     setPreviewingEpisode
   } = useApp();
 
-  const totalRevenue = seriesList.reduce((acc, s) => acc + s.revenueTotal, 0);
-  const totalStreams = seriesList.reduce((acc, s) => acc + s.viewsCount, 0);
-  const activeSubscribers = subscribedUsersList.filter(s => s.status === 'active').length;
+  const totalRevenue = dashboardStats?.totalRevenue != null && dashboardStats.totalRevenue > 0
+    ? dashboardStats.totalRevenue
+    : seriesList.reduce((acc, s) => acc + (s.revenueTotal || 0), 0);
+  const totalStreams = seriesList.reduce((acc, s) => acc + (s.viewsCount || 0), 0);
+  const activeSubscribers = dashboardStats?.activeSubscribers != null
+    ? dashboardStats.activeSubscribers
+    : subscribedUsersList.filter(s => s.status === 'active').length;
 
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">

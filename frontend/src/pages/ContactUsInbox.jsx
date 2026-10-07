@@ -26,7 +26,7 @@ export const ContactUsInbox = () => {
     e.preventDefault();
     if (!replyText.trim() || !selectedInquiry) return;
 
-    replyToInquiry(selectedInquiry.id, replyText);
+    replyToInquiry(selectedInquiry.id || selectedInquiry._id, replyText);
 
     const updatedInquiry = {
       ...selectedInquiry,
@@ -93,10 +93,10 @@ export const ContactUsInbox = () => {
         {/* Left: Ticket Cards List */}
         <div className="lg:col-span-5 space-y-3 overflow-y-auto max-h-[750px]">
           {filteredInquiries.map((inq) => {
-            const isSelected = selectedInquiry?.id === inq.id;
+            const isSelected = (selectedInquiry?.id || selectedInquiry?._id) === (inq.id || inq._id);
             return (
               <div
-                key={inq.id}
+                key={inq.id || inq._id}
                 onClick={() => setSelectedInquiry(inq)}
                 className={`p-4 rounded-2xl border transition-all cursor-pointer space-y-2.5 ${
                   isSelected
@@ -158,7 +158,8 @@ export const ContactUsInbox = () => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => {
-                        updateInquiryStatus(selectedInquiry.id, 'resolved');
+                        const inqId = selectedInquiry.id || selectedInquiry._id;
+                        updateInquiryStatus(inqId, 'resolved');
                         setSelectedInquiry({ ...selectedInquiry, status: 'resolved' });
                       }}
                       className="px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold hover:bg-emerald-500/30 transition-colors flex items-center gap-1"
@@ -198,8 +199,8 @@ export const ContactUsInbox = () => {
                     <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                       Response History ({selectedInquiry.replies.length})
                     </div>
-                    {selectedInquiry.replies.map((rep) => (
-                      <div key={rep.id} className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/20 text-xs space-y-1">
+                    {selectedInquiry.replies.map((rep, idx) => (
+                      <div key={rep.id || rep._id || idx} className="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-500/20 text-xs space-y-1">
                         <div className="flex items-center justify-between text-[10px]">
                           <span className="font-bold text-emerald-400">{rep.sender} ({rep.role})</span>
                           <span className="text-slate-400 font-mono">{rep.timestamp}</span>

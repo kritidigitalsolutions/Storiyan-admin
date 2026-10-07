@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   FileText,
@@ -15,13 +15,19 @@ export const LegalCMS = () => {
   const [activeTab, setActiveTab] = useState('editor');
 
   const currentDoc = legalDocsList.find(d => d.slug === selectedSlug) || legalDocsList[0];
-  const [contentMarkdown, setContentMarkdown] = useState(currentDoc.contentMarkdown);
+  const [contentMarkdown, setContentMarkdown] = useState(currentDoc?.contentMarkdown || '');
+
+  useEffect(() => {
+    if (currentDoc) {
+      setContentMarkdown(currentDoc.contentMarkdown || '');
+    }
+  }, [selectedSlug, legalDocsList]);
 
   // Switch doc handler
   const handleSelectDoc = (slug) => {
     setSelectedSlug(slug);
     const doc = legalDocsList.find(d => d.slug === slug);
-    if (doc) setContentMarkdown(doc.contentMarkdown);
+    if (doc) setContentMarkdown(doc.contentMarkdown || '');
   };
 
   const handleSave = () => {

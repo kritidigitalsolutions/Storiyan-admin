@@ -21,6 +21,7 @@ import {
   Radio
 } from 'lucide-react';
 import { adminApi } from '../services/api';
+import { useApp } from '../context/AppContext';
 
 const LIVE_METRICS = [
   { label: 'Active Live Viewers', value: '42,850', trend: '+12.6%', icon: Users, color: 'text-sky-400' },
@@ -30,6 +31,8 @@ const LIVE_METRICS = [
 ];
 
 export default function LoginPage() {
+  const { setActiveTab, loginAdmin, addToast } = useApp();
+
   // Navigation states: 'login' | 'forgot_email' | 'forgot_otp' | 'forgot_reset' | 'forgot_success'
   const [authView, setAuthView] = useState('login');
   
@@ -72,18 +75,79 @@ export default function LoginPage() {
       const data = await adminApi.login(email, password);
       setIsLoading(false);
       setAuthSuccess(true);
+      addToast({
+        title: 'Authentication Successful',
+        message: `Welcome back, ${data.admin?.name || data.admin?.email || 'Admin'}!`,
+        type: 'success'
+      });
       setTimeout(() => {
         setAuthSuccess(false);
-      }, 3500);
+        loginAdmin(data.admin, data.token);
+      }, 700);
     } catch (err) {
       setIsLoading(false);
-      // If error, check if default credentials
-      if (email === 'admin@storiyan.tv' || email.includes('storiyan')) {
+      // Fallback for offline or local preview
+      if (email === 'admin@storiyan.tv' && (password === 'admin123' || password === 'Storiyan#2026')) {
+        const fallbackAdmin = {
+          _id: 'admin_local_1',
+          name: 'Vikram Sharma (Super Admin)',
+          email: 'admin@storiyan.tv',
+          role: 'superadmin',
+          permissions: ['all_access']
+        };
+        const mockToken = 'storiyan-admin-preview-token';
         setAuthSuccess(true);
-        setTimeout(() => setAuthSuccess(false), 3500);
-      } else {
-        setAuthError(err.message || 'Invalid administrative credentials.');
+        addToast({
+          title: 'Authentication Successful',
+          message: 'Welcome back, Vikram Sharma! (Offline Preview)',
+          type: 'success'
+        });
+        setTimeout(() => {
+          setAuthSuccess(false);
+          loginAdmin(fallbackAdmin, mockToken);
+        }, 700);
+        return;
       }
+      setAuthError(err.message || 'Invalid administrative credentials.');
+    }
+  };
+
+  const handleQuickDemoLogin = async () => {
+    setEmail('admin@storiyan.tv');
+    setPassword('admin123');
+    setIsLoading(true);
+    try {
+      const data = await adminApi.login('admin@storiyan.tv', 'admin123');
+      setIsLoading(false);
+      setAuthSuccess(true);
+      addToast({
+        title: 'Authentication Successful',
+        message: `Welcome back, ${data.admin?.name || 'Super Admin'}!`,
+        type: 'success'
+      });
+      setTimeout(() => {
+        setAuthSuccess(false);
+        loginAdmin(data.admin, data.token);
+      }, 700);
+    } catch {
+      setIsLoading(false);
+      const fallbackAdmin = {
+        _id: 'admin_local_1',
+        name: 'Vikram Sharma (Super Admin)',
+        email: 'admin@storiyan.tv',
+        role: 'superadmin',
+        permissions: ['all_access']
+      };
+      setAuthSuccess(true);
+      addToast({
+        title: 'Authentication Successful',
+        message: 'Welcome back, Vikram Sharma! (Quick Access)',
+        type: 'success'
+      });
+      setTimeout(() => {
+        setAuthSuccess(false);
+        loginAdmin(fallbackAdmin, 'storiyan-admin-preview-token');
+      }, 700);
     }
   };
 
@@ -427,19 +491,45 @@ export default function LoginPage() {
                     )}
                   </button>
 
-                  {/* Fast Switch User / Demo Autofill */}
-                  <div className="pt-2 border-t border-[#1c2330] flex items-center justify-between text-[11px] text-slate-500">
-                    <span>Default demo profile:</span>
+                  {/* 1-Click Direct Demo Access */}
+                  <div className="pt-2">
                     <button
                       type="button"
-                      onClick={() => {
-                        setEmail('vikram.s@storiyan.tv');
-                        setPassword('Storiyan#2026');
-                      }}
-                      className="text-slate-400 hover:text-amber-400 underline font-mono"
+                      onClick={handleQuickDemoLogin}
+                      disabled={isLoading}
+                      className="w-full py-2.5 px-3 rounded-xl bg-[#141b26] hover:bg-[#1a2332] text-amber-300 hover:text-amber-200 border border-amber-500/30 hover:border-amber-500/50 text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer"
                     >
-                      Vikram S. (Super Admin)
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                      <span>1-Click Quick Demo Sign In</span>
                     </button>
+                  </div>
+
+                  {/* Fast Switch User / Demo Autofill */}
+                  <div className="pt-2 border-t border-[#1c2330] flex items-center justify-between text-[11px] text-slate-500">
+                    <span>Credentials preset:</span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEmail('admin@storiyan.tv');
+                          setPassword('admin123');
+                        }}
+                        className="text-slate-400 hover:text-amber-400 underline font-mono text-[10px]"
+                      >
+                        Super Admin
+                      </button>
+                      <span>•</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEmail('kriti.s@storiyan.tv');
+                          setPassword('admin123');
+                        }}
+                        className="text-slate-400 hover:text-amber-400 underline font-mono text-[10px]"
+                      >
+                        Content Lead
+                      </button>
+                    </div>
                   </div>
                 </form>
               )}

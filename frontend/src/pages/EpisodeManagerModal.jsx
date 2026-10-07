@@ -44,8 +44,9 @@ export const EpisodeManagerModal = ({ series, onClose }) => {
     e.preventDefault();
     if (!title.trim()) return;
 
+    const targetSeriesId = series.id || series._id;
     if (editingEpId) {
-      updateEpisode(series.id, editingEpId, {
+      updateEpisode(targetSeriesId, editingEpId, {
         title,
         synopsis,
         durationFormatted,
@@ -56,7 +57,7 @@ export const EpisodeManagerModal = ({ series, onClose }) => {
         thumbnail
       });
     } else {
-      addEpisode(series.id, {
+      addEpisode(targetSeriesId, {
         title,
         synopsis,
         durationFormatted,
@@ -336,7 +337,7 @@ export const EpisodeManagerModal = ({ series, onClose }) => {
                       </button>
 
                       <button
-                        onClick={() => deleteEpisode(series.id, ep.id)}
+                        onClick={() => deleteEpisode(series.id || series._id, ep.id || ep._id)}
                         className="p-2 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-900/50 transition-colors"
                         title="Delete Episode"
                       >

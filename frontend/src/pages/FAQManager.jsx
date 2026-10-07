@@ -51,7 +51,7 @@ export const FAQManager = () => {
     if (!question.trim() || !answer.trim()) return;
 
     if (editingFAQ) {
-      updateFAQ(editingFAQ.id, {
+      updateFAQ(editingFAQ.id || editingFAQ._id, {
         question,
         answer,
         category
@@ -132,7 +132,7 @@ export const FAQManager = () => {
               }`}
             >
               <div
-                onClick={() => setExpandedId(isExpanded ? null : faq.id)}
+                onClick={() => setExpandedId(isExpanded ? null : (faq.id || faq._id))}
                 className="p-5 flex items-center justify-between cursor-pointer"
               >
                 <div className="flex items-center gap-3">
@@ -157,7 +157,7 @@ export const FAQManager = () => {
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
-                      onClick={() => deleteFAQ(faq.id)}
+                      onClick={() => deleteFAQ(faq.id || faq._id)}
                       className="p-1.5 rounded-lg bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-900/50 transition-colors"
                       title="Delete Question"
                     >

@@ -164,9 +164,13 @@ export const adminApi = {
     return handleResponse(res);
   },
 
-  // Subscribers & Refunds
+  // Subscribers & Refunds & Transactions
   getAllSubscribers: async () => {
     const res = await fetch(`${BASE_URL}/admin/subscribers`, { headers: getHeaders() });
+    return handleResponse(res);
+  },
+  getAllTransactions: async () => {
+    const res = await fetch(`${BASE_URL}/admin/transactions`, { headers: getHeaders() });
     return handleResponse(res);
   },
   processRefund: async (id, reason) => {
@@ -282,6 +286,14 @@ export const adminApi = {
   // Roles
   getAdminRoles: async () => {
     const res = await fetch(`${BASE_URL}/admin/roles`, { headers: getHeaders() });
+    return handleResponse(res);
+  },
+  createAdminRole: async (roleData) => {
+    const res = await fetch(`${BASE_URL}/admin/roles`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(roleData),
+    });
     return handleResponse(res);
   },
 };

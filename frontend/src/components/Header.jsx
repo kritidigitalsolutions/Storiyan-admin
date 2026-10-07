@@ -20,7 +20,10 @@ export const Header = ({ onOpenNewSeriesModal }) => {
     isSimulatorOpen,
     setIsSimulatorOpen,
     setActiveTab,
-    transactionsList
+    transactionsList,
+    isBackendConnected,
+    currentAdminUser,
+    logoutAdmin
   } = useApp();
 
   const [showNotifMenu, setShowNotifMenu] = useState(false);
@@ -48,11 +51,14 @@ export const Header = ({ onOpenNewSeriesModal }) => {
       <div>
         <h1 className="text-xl font-bold font-display text-white flex items-center gap-2.5">
           {currentInfo.title}
-          {activeTab === 'dashboard' && (
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
-              <Radio className="w-3 h-3 animate-pulse" /> LIVE
-            </span>
-          )}
+          <span className={`inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${
+            isBackendConnected
+              ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+              : 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+          }`}>
+            <Radio className={`w-3 h-3 ${isBackendConnected ? 'animate-pulse text-emerald-400' : 'text-amber-400'}`} />
+            {isBackendConnected ? 'Backend & MongoDB Connected' : 'Local Fallback'}
+          </span>
         </h1>
         <p className="text-xs text-slate-400 mt-0.5 font-medium">{currentInfo.subtitle}</p>
       </div>
@@ -136,16 +142,16 @@ export const Header = ({ onOpenNewSeriesModal }) => {
             className="flex items-center gap-3 pl-2 pr-3 py-1.5 rounded-xl bg-[#141A26] border border-[#232C3E] hover:border-amber-500/30 transition-all"
           >
             <img
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80"
+              src={currentAdminUser?.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80"}
               alt="Admin Avatar"
               className="w-8 h-8 rounded-lg object-cover ring-2 ring-amber-500/40"
             />
             <div className="text-left hidden sm:block">
               <div className="text-xs font-bold text-white flex items-center gap-1">
-                Vikram S.
+                {currentAdminUser?.name ? currentAdminUser.name.split(' ')[0] : 'Admin'}
                 <Shield className="w-3 h-3 text-amber-400" />
               </div>
-              <div className="text-[10px] text-slate-400 font-medium">Super Admin</div>
+              <div className="text-[10px] text-slate-400 font-medium capitalize">{currentAdminUser?.role || 'Super Admin'}</div>
             </div>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
           </button>
@@ -153,10 +159,10 @@ export const Header = ({ onOpenNewSeriesModal }) => {
           {showProfileMenu && (
             <div className="absolute right-0 mt-3 w-56 bg-[#121722] border border-[#232C3E] rounded-2xl shadow-2xl p-3 z-50 animate-scale-in">
               <div className="px-3 py-2 border-b border-slate-800">
-                <div className="text-xs font-bold text-white">Vikram Sengupta</div>
-                <div className="text-[10px] text-slate-400">vikram.admin@storiyan.tv</div>
-                <div className="mt-1.5 inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  Super Admin
+                <div className="text-xs font-bold text-white">{currentAdminUser?.name || 'Vikram Sharma'}</div>
+                <div className="text-[10px] text-slate-400">{currentAdminUser?.email || 'admin@storiyan.tv'}</div>
+                <div className="mt-1.5 inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 capitalize">
+                  {currentAdminUser?.role || 'Super Admin'}
                 </div>
               </div>
               <div className="py-2 space-y-1">
@@ -175,7 +181,10 @@ export const Header = ({ onOpenNewSeriesModal }) => {
               </div>
               <div className="pt-2 border-t border-slate-800">
                 <button
-                  onClick={() => setShowProfileMenu(false)}
+                  onClick={() => {
+                    setShowProfileMenu(false);
+                    logoutAdmin();
+                  }}
                   className="w-full flex items-center gap-2 px-3 py-2 text-xs text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors font-semibold"
                 >
                   <LogOut className="w-3.5 h-3.5" />

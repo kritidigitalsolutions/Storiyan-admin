@@ -207,7 +207,7 @@ export const NotificationsHub = () => {
             </thead>
             <tbody className="divide-y divide-slate-800">
               {notificationsList.map(notif => (
-                <tr key={notif.id} className="hover:bg-slate-900/50 transition-colors">
+                <tr key={notif.id || notif._id} className="hover:bg-slate-900/50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="font-bold text-white max-w-sm">{notif.title}</div>
                     <div className="text-slate-400 text-[11px] line-clamp-1">{notif.body}</div>

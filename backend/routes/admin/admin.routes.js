@@ -44,6 +44,7 @@ router.delete("/plans/:id", adminController.deletePlan);
 // Subscribers & Refunds
 router.get("/subscribers", adminController.getAllSubscribers);
 router.post("/subscribers/:id/refund", adminController.processRefund);
+router.get("/transactions", adminController.getAllTransactions);
 
 // User Moderation
 router.get("/users", adminController.getAllUsers);

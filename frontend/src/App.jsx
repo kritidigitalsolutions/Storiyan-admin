@@ -17,7 +17,7 @@ import { LegalCMS } from './pages/LegalCMS';
 import { FAQManager } from './pages/FAQManager';
 import { ContactUsInbox } from './pages/ContactUsInbox';
 import { AdminSettings } from './pages/AdminSettings';
-import LoginPage  from './pages/Loginpage';
+import LoginPage from './pages/LoginPage';
 
 const MainLayout = () => {
   const { activeTab } = useApp();
@@ -36,8 +36,6 @@ const MainLayout = () => {
         );
       case 'partners':
         return <ContentPartners />;
-      case 'loginpage':
-        return <LoginPage />;
       case 'plans':
         return <SubscriptionPlans />;
       case 'subscribers':
@@ -55,7 +53,7 @@ const MainLayout = () => {
       case 'settings':
         return <AdminSettings />;
       default:
-        return <Dashboard />;
+        return <Dashboard onOpenNewSeriesModal={() => setIsCreateSeriesModalOpen(true)} />;
     }
   };
 
@@ -81,10 +79,25 @@ const MainLayout = () => {
   );
 };
 
+const AppContent = () => {
+  const { isAuthenticated } = useApp();
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#080A0F] text-slate-100 font-sans">
+        <LoginPage />
+        <ToastContainer />
+      </div>
+    );
+  }
+
+  return <MainLayout />;
+};
+
 export function App() {
   return (
     <AppProvider>
-      <MainLayout />
+      <AppContent />
     </AppProvider>
   );
 }
