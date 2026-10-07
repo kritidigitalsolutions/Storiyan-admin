@@ -1,47 +1,38 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
-const Admin = require("./models/admin.model"); // Adjust path to your schema
-const adminRoutes = require("./routes/admin/auth.routes");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const seedDatabase = require("./utils/seeder");
 
 dotenv.config();
 const app = express();
 
-const userAuthRoutes = require("./routes/user/auth.routes");
 app.use(express.json());
 app.use(cors());
 
-// app.use("/", (req, res) => {
-//     res.json({ message: "Welcome to Storiyan Backend API" })
-// })
+// Import Routes
+const adminRoutes = require("./routes/admin/admin.routes");
+const userRoutes = require("./routes/user/user.routes");
+const userAuthRoutes = require("./routes/user/auth.routes");
 
-
-// Admin routes
+// Mount Routes
 app.use("/api/admin", adminRoutes);
-
-
-
-// user routes
-// Inside your app.js file
-
-// Mount the user authentication routes
 app.use("/api/user/auth", userAuthRoutes);
+app.use("/api/user", userRoutes);
 
-// Function to automatically create a custom admin account if none exists
-// this is for first time add new admin data
-const createAdmin = async () => {
-  const hashedPassword = await bcrypt.hash("admin123", 10);
-
-  await Admin.create({
-    name: "Super Admin",
-    email: "admin@gmail.com",
-    password: hashedPassword
+// Root health check
+app.get("/", (req, res) => {
+  res.json({
+    name: "Storiyan Vertical Drama Streaming API",
+    status: "online",
+    version: "2.0.0",
+    adminEndpoints: "/api/admin",
+    userEndpoints: "/api/user",
   });
+});
 
-  console.log("Admin created");
-};
-createAdmin().catch(err => console.log("Admin already exists or error:", err.message));
-
+// Auto-seed initial catalog data on startup if database is empty
+setTimeout(() => {
+  seedDatabase().catch((err) => console.log("Seeder startup notice:", err.message));
+}, 1500);
 
 module.exports = app;

@@ -1,0 +1,703 @@
+{
+  "info": {
+    "_postman_id": "89f99ef8-fde8-4e97-9c8a-storiyan-user-apis",
+    "name": "Storiyan - Flutter Mobile User APIs",
+    "description": "Complete collection of Mobile User APIs for Storiyan 9:16 Vertical Drama Streaming Flutter Mobile Application. Includes Authentication, Catalog Explore, Video Streaming, Coin Unlock, Watch History, Watchlist, Subscription Micro-Passes, Coin Wallet, Push Notifications, FAQs, and Support Tickets.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5003/api",
+      "type": "string"
+    },
+    {
+      "key": "userToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "seriesId",
+      "value": "squid-game-3",
+      "type": "string"
+    },
+    {
+      "key": "episodeId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "planId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication & Profile",
+      "item": [
+        {
+          "name": "1.1 Send OTP (Phone Login)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+919876543210\",\n  \"language\": \"Hindi\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/auth/send-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "auth", "send-otp"]
+            },
+            "description": "Initiates phone-based OTP login for Flutter app. Returns generated 6-digit OTP for testing without external SMS gateway."
+          }
+        },
+        {
+          "name": "1.2 Verify OTP & Login / Signup",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.environment.set(\"userToken\", jsonData.token);",
+                  "    pm.collectionVariables.set(\"userToken\", jsonData.token);",
+                  "    console.log(\"Saved userToken:\", jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+919876543210\",\n  \"otp\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/auth/verify-otp",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "auth", "verify-otp"]
+            },
+            "description": "Verifies 6-digit OTP, creates or retrieves user account, and returns JWT session token."
+          }
+        },
+        {
+          "name": "1.3 Get Current User Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "profile"]
+            },
+            "description": "Fetches current logged-in user profile with coin balance, active subscription pass, unlocked episodes, and preferences."
+          }
+        },
+        {
+          "name": "1.4 Update User Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Aarav Sharma\",\n  \"email\": \"aarav.sharma@gmail.com\",\n  \"preferredLanguage\": \"Hindi\",\n  \"profileImage\": \"https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&auto=format&fit=crop&q=80\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "profile"]
+            },
+            "description": "Updates full name, email address, profile picture avatar, and preferred language."
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Home & Catalog Explore",
+      "item": [
+        {
+          "name": "2.1 Featured & Banner Carousel Series",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/series/featured",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "series", "featured"]
+            },
+            "description": "Returns top highlighted vertical drama series for home screen banner carousel."
+          }
+        },
+        {
+          "name": "2.2 Trending Vertical Dramas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/series/trending",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "series", "trending"]
+            },
+            "description": "Returns top trending series ranked by popularity, view counts, and engagement."
+          }
+        },
+        {
+          "name": "2.3 New Weekly Releases",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/series/new-releases",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "series", "new-releases"]
+            },
+            "description": "Returns latest vertical series released this week."
+          }
+        },
+        {
+          "name": "2.4 Search & Genre Filter Series Catalog",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/series?genre=Romantic&search=&page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "series"],
+              "query": [
+                { "key": "genre", "value": "Romantic" },
+                { "key": "search", "value": "" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            },
+            "description": "Search series by title keywords or filter by genre (Romantic, Thriller, Billionaire, Drama, Revenge)."
+          }
+        },
+        {
+          "name": "2.5 Series Details & Episode List",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/series/{{seriesId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "series", "{{seriesId}}"]
+            },
+            "description": "Returns complete series metadata, cast, director, total episodes, and locked/unlocked status for each episode based on user's active pass or unlocked coins."
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Episode Playback & Unlock",
+      "item": [
+        {
+          "name": "3.1 Get Episode Stream Info",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/episodes/{{episodeId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "episodes", "{{episodeId}}"]
+            },
+            "description": "Fetches episode details and full video stream URL (if free, unlocked with coins, or active pass exists)."
+          }
+        },
+        {
+          "name": "3.2 Unlock Episode with Coins",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/episodes/{{episodeId}}/unlock",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "episodes", "{{episodeId}}", "unlock"]
+            },
+            "description": "Deducts 5 coins from user wallet and permanently unlocks the episode for playback."
+          }
+        },
+        {
+          "name": "3.3 Like Episode",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/episodes/{{episodeId}}/like",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "episodes", "{{episodeId}}", "like"]
+            },
+            "description": "Increments like count on a vertical episode."
+          }
+        },
+        {
+          "name": "3.4 Record View Event",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/episodes/{{episodeId}}/view",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "episodes", "{{episodeId}}", "view"]
+            },
+            "description": "Fires when user watches 5+ seconds of an episode to increment view counter."
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Watch History & Watchlist",
+      "item": [
+        {
+          "name": "4.1 Get Watch History & Resume Points",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/history",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "history"]
+            },
+            "description": "Returns recent watching history with episode progress timestamps for 'Continue Watching' row."
+          }
+        },
+        {
+          "name": "4.2 Save / Update Playback Progress",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seriesId\": \"{{seriesId}}\",\n  \"episodeId\": \"{{episodeId}}\",\n  \"progressSeconds\": 75,\n  \"durationSeconds\": 180,\n  \"completed\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/history",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "history"]
+            },
+            "description": "Periodically sends playback position (in seconds) to resume seamlessly on next session."
+          }
+        },
+        {
+          "name": "4.3 Get User Watchlist / Saved Series",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/watchlist",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "watchlist"]
+            },
+            "description": "Returns list of series bookmarked / added to watchlist by the user."
+          }
+        },
+        {
+          "name": "4.4 Toggle Watchlist (Bookmark/Remove)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"seriesId\": \"{{seriesId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/watchlist/toggle",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "watchlist", "toggle"]
+            },
+            "description": "Adds or removes a series from the user's personal watchlist."
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Subscriptions & Passes",
+      "item": [
+        {
+          "name": "5.1 Get Active Subscription Plans & Passes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/plans",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "plans"]
+            },
+            "description": "Fetches all active micro-passes (₹3 Limited Ads, ₹5 Ad-Free 7-Day Pass, ₹29 All-Series 7-Day Pass, ₹99 Monthly VIP Master Pass)."
+          }
+        },
+        {
+          "name": "5.2 Purchase Subscription Pass",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"planId\": \"{{planId}}\",\n  \"paymentMethod\": \"UPI\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/subscriptions/purchase",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "subscriptions", "purchase"]
+            },
+            "description": "Activates a micro-pass or VIP plan upon successful payment gateway callback."
+          }
+        },
+        {
+          "name": "5.3 Get Current Active Subscription",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/subscriptions/my-subscription",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "subscriptions", "my-subscription"]
+            },
+            "description": "Checks if the user has an active pass and returns remaining validity days."
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Wallet & Creator Coins",
+      "item": [
+        {
+          "name": "6.1 Get Coin Balance & Ledger",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/wallet",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "wallet"]
+            },
+            "description": "Returns current coin balance and history of coin purchases & episode unlock debits."
+          }
+        },
+        {
+          "name": "6.2 Recharge / Add Coins",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coins\": 100,\n  \"amount\": 49,\n  \"paymentMethod\": \"GooglePay\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/wallet/add-coins",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "wallet", "add-coins"]
+            },
+            "description": "Recharges coins into the user's wallet."
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Notifications & Alerts",
+      "item": [
+        {
+          "name": "7.1 Get Notification Feed",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/notifications",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "notifications"]
+            },
+            "description": "Returns user notification feed with episode alerts and special promotions."
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Help Center, FAQs & Legal CMS",
+      "item": [
+        {
+          "name": "8.1 Get Help Center FAQs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/faqs",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "faqs"]
+            },
+            "description": "Fetches help center FAQs grouped by Subscriptions, Wallet, Playback, and Passes."
+          }
+        },
+        {
+          "name": "8.2 Get Terms & Conditions Policy",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/legal/terms-and-conditions",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "legal", "terms-and-conditions"]
+            },
+            "description": "Fetches markdown content for Terms & Conditions."
+          }
+        },
+        {
+          "name": "8.3 Get Privacy Policy",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/legal/privacy-policy",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "legal", "privacy-policy"]
+            },
+            "description": "Fetches markdown content for Privacy Policy."
+          }
+        },
+        {
+          "name": "8.4 Get Refund & Cancellation Policy",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/legal/refund-policy",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "legal", "refund-policy"]
+            },
+            "description": "Fetches markdown content for Refund Policy."
+          }
+        },
+        {
+          "name": "8.5 Submit Support Inquiry / Ticket",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Aarav Sharma\",\n  \"email\": \"aarav.sharma@gmail.com\",\n  \"phone\": \"+919876543210\",\n  \"subject\": \"UPI payment deducted but pass not active\",\n  \"category\": \"Billing & Subscriptions\",\n  \"message\": \"I paid ₹5 via PhonePe for Squid Game 3 pass. Money got debited but episode 3 remains locked. Order ID: ORD_ST_9921.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user/contact",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "contact"]
+            },
+            "description": "Submits a customer support ticket to Storiyan admin inbox."
+          }
+        },
+        {
+          "name": "8.6 Get My Support Tickets",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{userToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/contact/my-tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "contact", "my-tickets"]
+            },
+            "description": "Returns support ticket threads and agent replies for logged in user."
+          }
+        }
+      ]
+    }
+  ]
+}

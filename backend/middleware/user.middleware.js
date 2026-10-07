@@ -1,24 +1,47 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/user.model");
 
-const isAuth = (req, res, next) => {
+const isAuth = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-    console.log("isAuth middleware - Authorization header:", authHeader ? "Present" : "Missing");
-
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      console.log("isAuth failed: No bearer token");
-      return res.status(401).json({ message: "Unauthorized: No token provided" });
+      return res.status(401).json({ success: false, message: "Unauthorized: No token provided" });
     }
 
     const token = authHeader.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("isAuth passed - User:", decoded.id);
-    req.user = decoded;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "your_fallback_secret");
+
+    const user = await User.findById(decoded.id || decoded._id);
+    if (!user) {
+      return res.status(401).json({ success: false, message: "User account not found" });
+    }
+
+    if (user.status === "banned") {
+      return res.status(403).json({ success: false, message: "Account has been suspended by administration" });
+    }
+
+    req.user = user;
     next();
   } catch (error) {
-    console.log("isAuth failed:", error.message);
-    return res.status(401).json({ message: "Unauthorized: Invalid or expired token" });
+    return res.status(401).json({ success: false, message: "Unauthorized: Invalid or expired token" });
   }
 };
 
-module.exports = isAuth;
+const optionalAuth = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      const token = authHeader.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || "your_fallback_secret");
+      const user = await User.findById(decoded.id || decoded._id);
+      if (user && user.status !== "banned") {
+        req.user = user;
+      }
+    }
+  } catch (err) {
+    // Ignore invalid token for optional auth
+  }
+  next();
+};
+
+module.exports = { isAuth, optionalAuth };
